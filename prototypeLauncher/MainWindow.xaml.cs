@@ -22,6 +22,7 @@ namespace MyServerLauncher
         {
             InitializeComponent();
             this.fivemPath = ConfigurationManager.AppSettings.Get("fivemPath");
+            Path.Text = this.fivemPath;
         }
 
         private void ButtonPlayClick(object sender, RoutedEventArgs e)
@@ -67,13 +68,28 @@ namespace MyServerLauncher
                 path = path.Replace("\\FiveM.exe", "");
                 Path.Text = path;
                 this.fivemPath = path;
-                ConfigurationManager.AppSettings.Set("fivemPath", this.fivemPath);
+                UpdateSetting("FivemPath", this.fivemPath);
             }
             else
             {
                 Path.Text = "Ce fichier n'est pas valide";
             }
 
+        }
+
+        /// <summary>
+        /// Updates AppSettings 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        private static void UpdateSetting(string key, string value)
+        {
+            Configuration configuration = ConfigurationManager.
+                OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save();
+
+            ConfigurationManager.RefreshSection("appSettings");
         }
 
         /// <summary>
